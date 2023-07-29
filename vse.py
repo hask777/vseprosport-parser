@@ -1,6 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+from db.database import engine, SessionLocal, Base
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from db import models
+from datetime import date, datetime
+from datetime import datetime, date
+import time
+
+db = SessionLocal() 
+
+# db.query(models.Prediction).delete()
+# db.commit()
+
+today = str(date.today())
 
 base_url = "https://www.vseprosport.by"
 
@@ -27,7 +41,7 @@ with open('json/vse.json', 'r', encoding='utf-8') as f:
     links = json.load(f)
 
 data = {}
-result = []
+events = []
 
 
 
@@ -102,10 +116,36 @@ for link in links:
     except:
         continue
 
-    result.append(data)
+    events.append(data)
 
 
-with open('json/result.json', 'w', encoding='utf-8') as f:
-    json.dump(result, f, indent=4, ensure_ascii=False)
+# with open('json/result.json', 'w', encoding='utf-8') as f:
+#     json.dump(result, f, indent=4, ensure_ascii=False)
 
 
+for event in events:
+
+    game = models.Prediction()
+
+    game.title = event['title']
+    game.country = event['country']
+    game.league = event['league']
+    game.matchtime = event['matchtime']
+    game.matchdate = event['matchdate']
+    game.home_team_link = event['teams_hrefs'][0]
+    game.away_team_link = event['teams_hrefs'][1]
+    game.home_team_img = event['teams_imgs_src'][0]
+    game.away_team_img = event['teams_imgs_src'][1]
+    game.home_team_name_en = event['teams_names_en'][0]
+    game.away_team_name_en = event['teams_names_en'][1]
+    game.home_team_name = event['teams_names'][0]
+    game.away_team_name = event['teams_names'][1]
+    game.author = event['author']
+    game.home_team_anons = event['anons'][0]
+    game.away_team_anons = event['anons'][1]
+    game.prediction1 = event['predictions'][0]
+    game.prediction2 = event['predictions'][1]
+    game.prediction3 = event['predictions'][2]
+
+    db.add(game)
+    db.commit()
