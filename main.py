@@ -19,4 +19,4 @@ app.include_router(all.router)
 
 @app.get('/')
 async def root():
-    return {"data": "start"}
+    return RedirectResponse('/all')
