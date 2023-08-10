@@ -18,23 +18,23 @@ today = str(date.today())
 
 base_url = "https://www.vseprosport.by"
 
-# url = "https://www.vseprosport.by/news/all"
+url = "https://www.vseprosport.by/news/all"
 
-# response = requests.get(url).text
+response = requests.get(url).text
 
-# soup = BeautifulSoup(response, 'lxml')
+soup = BeautifulSoup(response, 'lxml')
 
-# links_to_single = soup.find_all('a', class_="forecast")
+links_to_single = soup.find_all('a', class_="forecast")
 
-# links = []
+links = []
 
-# for link in links_to_single:
-#     link = link.get('href')
-#     link = base_url + link
-#     links.append(link)
+for link in links_to_single:
+    link = link.get('href')
+    link = base_url + link
+    links.append(link)
 
-# with open('json/vse.json', 'w', encoding='utf-8') as f:
-#     json.dump(links, f, indent=4, ensure_ascii=False)
+with open('json/vse.json', 'w', encoding='utf-8') as f:
+    json.dump(links, f, indent=4, ensure_ascii=False)
 
 
 with open('json/vse.json', 'r', encoding='utf-8') as f:
@@ -119,8 +119,8 @@ for link in links:
     events.append(data)
 
 
-# with open('json/result.json', 'w', encoding='utf-8') as f:
-#     json.dump(result, f, indent=4, ensure_ascii=False)
+with open('json/result.json', 'w', encoding='utf-8') as f:
+    json.dump(events, f, indent=4, ensure_ascii=False)
 
 
 for event in events:
