@@ -22,12 +22,19 @@ async def get_all(request: Request, db: Session = Depends(get_db)):
 
     predictions = db.query(Prediction).filter(Prediction.matchdate == '10.08.2023').all()
 
+    # Win
     # for pr in predictions:
     #     if f'победа' in pr.prediction2 and 'форой' not in pr.prediction2:
     #         print(pr.prediction2)
 
+    # # Fora
+    # for pr in predictions:
+    #     if f'форой' in pr.prediction2 or 'фору' in pr.prediction2 or 'фора' in pr.prediction2:
+    #         print(pr.prediction2)
+
+    # Total
     for pr in predictions:
-        if f'форой' in pr.prediction2 or 'фору' in pr.prediction2 or 'фора' in pr.prediction2:
+        if f'тотал' in pr.prediction2:
             print(pr.prediction2)
     
     return predictions

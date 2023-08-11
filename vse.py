@@ -11,14 +11,14 @@ import time
 
 db = SessionLocal() 
 
-# db.query(models.Prediction).delete()
-# db.commit()
+db.query(models.Prediction).delete()
+db.commit()
 
 today = str(date.today())
 
 base_url = "https://www.vseprosport.by"
 
-url = "https://www.vseprosport.by/news/all"
+url = "https://www.vseprosport.by/news/football/all"
 
 response = requests.get(url).text
 
@@ -95,8 +95,8 @@ for link in links:
     prediction_section = soup.find('section', class_="prediction-section")
 
     prediction_content = prediction_section.find_all('p')
-    predictions = [p.text for p in prediction_content]
-    print(predictions)
+    predictions = [p.text for p in prediction_content if 'Наш прогноз' in p.text or 'Прогноз' in p.text]
+    # print(predictions)
 
     try: 
         data = {
@@ -122,6 +122,14 @@ for link in links:
 with open('json/result.json', 'w', encoding='utf-8') as f:
     json.dump(events, f, indent=4, ensure_ascii=False)
 
+with open('json/result.json', 'r', encoding='utf-8') as f:
+    events = json.load(f)
+
+# Win
+# for pr in events:
+#     if f'победа' in pr['predictions'][1] and 'форой' not in pr['predictions'][1]:
+#         print(pr['predictions'][1])
+
 
 for event in events:
 
@@ -143,9 +151,8 @@ for event in events:
     game.author = event['author']
     game.home_team_anons = event['anons'][0]
     game.away_team_anons = event['anons'][1]
-    game.prediction1 = event['predictions'][0]
-    game.prediction2 = event['predictions'][1]
-    game.prediction3 = event['predictions'][2]
+    game.predictions = event['predictions']
+ 
 
     db.add(game)
     db.commit()

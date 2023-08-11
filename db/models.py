@@ -23,6 +23,5 @@ class Prediction(Base):
     author = Column(String)
     home_team_anons = Column(String)
     away_team_anons = Column(String)
-    prediction1 = Column(String)
-    prediction2 = Column(String)
-    prediction3 = Column(String)
+    predictions = Column(JSON)
+   
