@@ -1,15 +1,18 @@
 import requests
+import time
 from bs4 import BeautifulSoup
 import json
+
+from datetime import date, datetime
+from datetime import datetime, date
+
 from db.database import engine, SessionLocal, Base
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from db import models
-from datetime import date, datetime
-from datetime import datetime, date
-import time
-from odd_types import odd_types
-from all_types import all
+
+from dictionary import odd_types
+from converter import get_types
 
 db = SessionLocal() 
 
@@ -96,15 +99,26 @@ for link in links:
 
     prediction_type = {}
 
-    for prediction in predictions:
+    # fora
+    
 
-        for type in all:
-            if type in prediction:
-                for team_name in teams_names:
-                    prediction_type = {
-                        'team_name': team_name,
-                        'odd': type
-                    }
+    def get_type(predictions, func):
+        _odds = func
+        for prediction in predictions:
+            for odd_type in _odds:
+                # print(odd_type)
+                if odd_type in prediction:
+                    print(odd_type)
+                    for team_name in teams_names:
+                        if f'«{team_name}»' in prediction\
+                        or f'{team_name}а' in prediction\
+                        or f'{team_name}у' in prediction\
+                        or f'{team_name}ы' in prediction:
+                            print(team_name)
+
+
+    get_type(predictions, get_types(odd_types))
+    
 
 
 
@@ -135,12 +149,6 @@ with open('json/result.json', 'w', encoding='utf-8') as f:
 
 with open('json/result.json', 'r', encoding='utf-8') as f:
     events = json.load(f)
-
-# Win
-# for pr in events:
-#     if f'победа' in pr['predictions'][1] and 'форой' not in pr['predictions'][1]:
-#         print(pr['predictions'][1])
-
 
 for event in events:
 
