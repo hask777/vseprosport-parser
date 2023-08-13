@@ -8,6 +8,8 @@ from db import models
 from datetime import date, datetime
 from datetime import datetime, date
 import time
+from odd_types import odd_types
+from all_types import all
 
 db = SessionLocal() 
 
@@ -82,21 +84,29 @@ for link in links:
 
     stat_titles = soup.find_all('div', class_='statistic-title')
 
-    # for title in stat_titles:
-    #     paragraphs = title.find_all('p')
-    #     # for p in paragraphs:
-    #     #     spans = p.find_all('span')
-    #         # print(spans)
-    #     try:
-    #         stat_odds = [print(str(span.text)) for span in paragraphs]
-    #     except:
-    #         continue
-
     prediction_section = soup.find('section', class_="prediction-section")
 
     prediction_content = prediction_section.find_all('p')
-    predictions = [p.text for p in prediction_content if 'Наш прогноз' in p.text or 'Прогноз' in p.text]
-    # print(predictions)
+    predictions = [p.text for p in prediction_content 
+                   if 'Наш прогноз' in p.text 
+                   or 'Прогноз' in p.text 
+                   or 'Наша ставка' in p.text
+                   or 'Выбираем ставку' in p.text
+                   ]
+
+    prediction_type = {}
+
+    for prediction in predictions:
+
+        for type in all:
+            if type in prediction:
+                for team_name in teams_names:
+                    prediction_type = {
+                        'team_name': team_name,
+                        'odd': type
+                    }
+
+
 
     try: 
         data = {
@@ -111,7 +121,8 @@ for link in links:
             'teams_names': teams_names,
             'author': author,
             'anons': anons,
-            'predictions': predictions
+            'predictions': prediction_type,
+            # 'predictions': predictions
         }
     except:
         continue
