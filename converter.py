@@ -13,15 +13,19 @@ def get_types(odd_types):
 
 
         if 'фора' in odd or 'фору' in odd or 'форой':
-            for i in range(-10, 11, 1):
-                if i in range(-10, 0, 1):
-                    vodd = f"{odd} ({i})"
-                else:
-                    vodd = f"{odd} (+{i})"
-                results.append(vodd)
+            # for i in range(-10, 11, 1):
+            #     if i in range(-10, 0, 1):
+            #         vodd = f"{odd} ({i})"
+            #     else:
+            #         vodd = f"{odd} (+{i})"
+            #     results.append(vodd)
+            results.append(odd)
 
 
         if 'победа' in odd or 'победу' in odd or 'победой' in odd:   
+            results.append(odd)
+
+        if 'не проиграет' in odd:   
             results.append(odd)
 
         if 'обе забьют' in odd:   

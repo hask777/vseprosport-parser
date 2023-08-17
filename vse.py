@@ -97,29 +97,38 @@ for link in links:
                    or 'Выбираем ставку' in p.text
                    ]
 
-    prediction_type = {}
-
-    # fora
-    
 
     def get_type(predictions, func):
+        prediction_type = {}
         _odds = func
         for prediction in predictions:
             for odd_type in _odds:
-                # print(odd_type)
                 if odd_type in prediction:
-                    print(odd_type)
+                    # prediction_type = {
+                    #             "type": odd_type
+                    #         }
                     for team_name in teams_names:
                         if f'«{team_name}»' in prediction\
+                        \
                         or f'{team_name}а' in prediction\
+                        or f'{team_name[:-1]}а' in prediction\
+                        \
                         or f'{team_name}у' in prediction\
+                        or f'{team_name[:-1]}у' in prediction\
+                        \
+                        or f'{team_name}и' in prediction\
+                        or f'{team_name[:-1]}и' in prediction\
+                        \
+                        or f'{team_name[:-1]}ы' in prediction\
                         or f'{team_name}ы' in prediction:
-                            print(team_name)
-
-
-    get_type(predictions, get_types(odd_types))
-    
-
+                            prediction_type = {
+                                "team": team_name,
+                                "type": odd_type
+                            }
+        print(prediction_type)
+        return prediction_type
+   
+    odd_type = get_type(predictions, get_types(odd_types))
 
 
     try: 
@@ -135,7 +144,7 @@ for link in links:
             'teams_names': teams_names,
             'author': author,
             'anons': anons,
-            'predictions': prediction_type,
+            'predictions': odd_type,
             # 'predictions': predictions
         }
     except:
@@ -144,10 +153,10 @@ for link in links:
     events.append(data)
 
 
-with open('json/result.json', 'w', encoding='utf-8') as f:
+with open('json/predictions.json', 'w', encoding='utf-8') as f:
     json.dump(events, f, indent=4, ensure_ascii=False)
 
-with open('json/result.json', 'r', encoding='utf-8') as f:
+with open('json/predictions.json', 'r', encoding='utf-8') as f:
     events = json.load(f)
 
 for event in events:
