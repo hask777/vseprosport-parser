@@ -13,6 +13,7 @@ from db import models
 
 from dictionary import odd_types
 from converter import get_types
+from get_team import get_team_name
 
 db = SessionLocal() 
 
@@ -91,7 +92,7 @@ for link in links:
 
     prediction_content = prediction_section.find_all('p')
     predictions = [p.text for p in prediction_content 
-                   if 'Наш прогноз' in p.text 
+                   if "Наш прогноз" in p.text 
                    or 'Прогноз' in p.text 
                    or 'Наша ставка' in p.text
                    or 'Выбираем ставку' in p.text
@@ -100,33 +101,19 @@ for link in links:
 
     def get_type(predictions, func):
         prediction_type = {}
+        arr = []
         _odds = func
         for prediction in predictions:
             for odd_type in _odds:
                 if odd_type in prediction:
-                    # prediction_type = {
-                    #             "type": odd_type
-                    #         }
-                    for team_name in teams_names:
-                        if f'«{team_name}»' in prediction\
-                        \
-                        or f'{team_name}а' in prediction\
-                        or f'{team_name[:-1]}а' in prediction\
-                        \
-                        or f'{team_name}у' in prediction\
-                        or f'{team_name[:-1]}у' in prediction\
-                        \
-                        or f'{team_name}и' in prediction\
-                        or f'{team_name[:-1]}и' in prediction\
-                        \
-                        or f'{team_name[:-1]}ы' in prediction\
-                        or f'{team_name}ы' in prediction:
-                            prediction_type = {
-                                "team": team_name,
-                                "type": odd_type
+                    prediction_type = {
+                                "team": get_team_name(teams_names, prediction),
+                                'type': odd_type
                             }
-        print(prediction_type)
-        return prediction_type
+                    arr.append(prediction_type)
+                   
+        print(arr)
+        return arr
    
     odd_type = get_type(predictions, get_types(odd_types))
 
@@ -144,7 +131,7 @@ for link in links:
             'teams_names': teams_names,
             'author': author,
             'anons': anons,
-            'predictions': odd_type,
+            'predictions':  get_type(predictions, get_types(odd_types)),
             # 'predictions': predictions
         }
     except:
@@ -153,10 +140,10 @@ for link in links:
     events.append(data)
 
 
-with open('json/predictions.json', 'w', encoding='utf-8') as f:
+with open('json/result.json', 'w', encoding='utf-8') as f:
     json.dump(events, f, indent=4, ensure_ascii=False)
 
-with open('json/predictions.json', 'r', encoding='utf-8') as f:
+with open('json/result.json', 'r', encoding='utf-8') as f:
     events = json.load(f)
 
 for event in events:
